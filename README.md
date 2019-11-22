@@ -19,9 +19,10 @@ ls -1 http/d-i/bionic/partman/
 
 # y ahora son:
 
+export PARTMAN_FILENAME=crypto
 #export PARTMAN_FILENAME=d1pv1vg1lv2
 #export PARTMAN_FILENAME=d1pv1vg2lv7
-export PARTMAN_FILENAME=lvm_default
+#export PARTMAN_FILENAME=lvm_default
 
 
 export BOX_VERSION=1.0.0
@@ -29,6 +30,8 @@ BOX_FILENAME="ubuntu-18.04-${PARTMAN_FILENAME}-virtualbox-${BOX_VERSION}.box"
 
 export CHECKPOINT_DISABLE=1
 export PACKER_LOG_PATH="packer.log" && > ${PACKER_LOG_PATH}
+export PACKER_CACHE_DIR=/tmp/packer_cache
+
 
 # construye box usando servidor de hora en internet:
 time packer build -var=headless=false  -var=version=${BOX_VERSION} ubuntu1804.json

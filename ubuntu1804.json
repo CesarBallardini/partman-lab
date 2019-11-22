@@ -54,6 +54,7 @@
       "ssh_wait_timeout": "10000s",
       "name": "virtualbox",
       "vm_name": "packer-ubuntu-18.04-amd64",
+      "output_directory": "/tmp/packer-build/",
       "virtualbox_version_file": ".vbox_version",
       "vboxmanage": [
 	    [ "modifyvm", "{{.Name}}", "--cableconnected1", "on"],
@@ -77,7 +78,7 @@
          "soap_use_proxy={{user `soap_use_proxy`}}"
       ],
       "execute_command": "chmod +x {{.Path}}; echo vagrant| {{ .Vars }} sudo -E -S /bin/bash {{.Path}}",
-      "scripts": ["scripts/update.sh","scripts/sshd.sh","scripts/sudoers.sh","scripts/vagrant.sh"]
+      "scripts": ["scripts/bionic/update.sh","scripts/bionic/sshd.sh","scripts/bionic/sudoers.sh","scripts/bionic/vagrant.sh"]
     },
     {
       "type": "shell",
@@ -89,7 +90,7 @@
          "soap_use_proxy={{user `soap_use_proxy`}}"
       ],
       "execute_command": "chmod +x {{.Path}}; echo vagrant| {{ .Vars }} sudo -E -S /bin/bash {{.Path}}",
-      "scripts": ["scripts/virtualbox.sh"]
+      "scripts": ["scripts/bionic/virtualbox.sh"]
     },
     {
       "type": "shell",
@@ -101,7 +102,7 @@
          "soap_use_proxy={{user `soap_use_proxy`}}"
       ],
       "execute_command": "chmod +x {{.Path}}; echo vagrant| {{ .Vars }} sudo -E -S /bin/bash {{.Path}}",
-      "scripts": ["scripts/cleanup.sh"]
+      "scripts": ["scripts/bionic/cleanup.sh"]
     }
    ],
 

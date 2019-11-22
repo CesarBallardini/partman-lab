@@ -1,15 +1,27 @@
 #!/bin/bash
 
+elimina_paquetes_apt() {
+
+  lista_paquetes="$*"
+
+  for p in $lista_paquetes
+  do
+    apt-get -y purge $p
+  done
+
+  return 0
+}
+
+
 SSH_USER=${SSH_USERNAME:-vagrant}
 
 export DEBIAN_FRONTEND=noninteractive
 
-paquetes_innecesarios= "ppp pppconfig pppoeconf popularity-contest installation-report landscape-common wireless-tools wpasupplicant ubuntu-serverguide"
 
 
 # ELiminamos paquetes que no aportan para una vm
-[ $(lsb_release -is) == "Debian" ] && apt-get -y purge crda bluetooth wpasupplicant wireless-regdb wireless-tools bluez eject iw laptop-detect task-laptop powertop
-apt-get -y purge $paquetes_innecesarios
+[ $(lsb_release -is) == "Debian" ] && elimina_paquetes_apt crda bluetooth wpasupplicant wireless-regdb wireless-tools bluez eject iw laptop-detect task-laptop powertop
+elimina_paquetes_apt ppp pppconfig pppoeconf popularity-contest installation-report landscape-common wireless-tools wpasupplicant ubuntu-serverguide
 
 
 # Removing all linux kernels except the currrent one
@@ -69,11 +81,11 @@ dpkg --get-selections | grep -v deinstall
 
 # Cleaning up udev rules
 rm -rf /dev/.udev/
-rm /lib/udev/rules.d/75-persistent-net-generator.rules
+rm -f /lib/udev/rules.d/75-persistent-net-generator.rules
 
 # Cleaning up leftover dhcp leases
-[ -d "/var/lib/dhcp3" ] && rm /var/lib/dhcp3/*
-[ -d "/var/lib/dhcp" ]  && rm /var/lib/dhcp/*
+[ -d "/var/lib/dhcp3" ] && rm -f /var/lib/dhcp3/*
+[ -d "/var/lib/dhcp" ]  && rm -f /var/lib/dhcp/*
 
 
 # from https://github.com/cbednarski/packer-ubuntu/blob/master/scripts-1604/vm_cleanup.sh#L9-L15
