@@ -8,7 +8,7 @@ ls -lha /home/${SSH_USER}
 sleep 10
 
 mkdir /mnt/vb
-mount -o loop /home/${SSH_USER}/VBoxGuestAdditions_${VBOX_VERSION}.iso /mnt/vb
+mount -r -o loop /home/${SSH_USER}/VBoxGuestAdditions_${VBOX_VERSION}.iso /mnt/vb
 yes | sh /mnt/vb/VBoxLinuxAdditions.run
 umount /mnt/vb
 rm /home/${SSH_USER}/VBoxGuestAdditions_${VBOX_VERSION}.iso
