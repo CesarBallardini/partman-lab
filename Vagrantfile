@@ -62,7 +62,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
  config.vm.define HOSTNAME do |srv|
 
     srv.vm.box = "cesarballardini/ubuntu1804"
-    srv.vm.box_url = "../ubuntu-18.04-lvm_default-virtualbox-1.0.0.box"
+    srv.vm.box_url = "ubuntu-18.04-lvm_default-virtualbox-1.0.0.box"
 
     srv.vm.network "private_network", ip: "192.168.33.11"
     srv.vm.boot_timeout = 3600
