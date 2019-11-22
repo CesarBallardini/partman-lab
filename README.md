@@ -59,6 +59,9 @@ rm -f ./${BOX_FILENAME}
 # Referencias
 
 * https://wikitech.wikimedia.org/wiki/PartMan
+* https://salsa.debian.org/installer-team/debian-installer/blob/master/doc/devel/partman-auto-recipe.txt
+* https://www.bishnet.net/tim/blog/2015/01/29/understanding-partman-autoexpert_recipe/
 * https://medium.com/sumup-engineering/image-creation-and-testing-with-hashicorp-packer-and-serverspec-bb2bd065441 packer + serverspec
 * https://lihuen.linti.unlp.edu.ar/index.php/Preseed.cfg
+* https://wiki.ubuntu.com/Enterprise/WorkstationAutoinstallPreseed
 
