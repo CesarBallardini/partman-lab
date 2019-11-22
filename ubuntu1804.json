@@ -1,0 +1,114 @@
+{
+"_comment": "laboratorio de prueba para recetas de Debian Partman en Preseed, sobre Ubuntu 18.04.3 Bionic",
+
+    "variables": {
+      "_comment": "partman_file DEBE estar asociada a un nombre de archivo dentro de ./http/d-i/bionic/ ",
+      "partman_file": "{{env `PARTMAN_FILENAME`}}",
+      "version": "{{env `version`}}",
+
+      "ntp_server":  "0.pool.ntp.org",
+      "preseed_proxy":  "{{env `http_proxy`}}",
+      "http_proxy": "{{env `http_proxy`}}",
+      "https_proxy": "{{env `https_proxy`}}",
+      "ftp_proxy": "{{env `ftp_proxy`}}",
+      "no_proxy": "{{env `no_proxy`}}",
+      "soap_use_proxy": "{{env `soap_use_proxy`}}"
+    },
+
+    "builders": [
+    {
+      "type": "virtualbox-iso",
+      "boot_command": [
+        "<esc><wait>",
+        "<esc><wait>",
+        "<enter><wait>",
+        "/install/vmlinuz<wait>",
+        " initrd=/install/initrd.gz",
+        " auto-install/enable=true",
+        " debconf/priority=critical",
+	" debian-installer=en_US auto locale=en_US kbd-chooser/method=us",
+	" keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false",
+	" fb=false debconf/frontend=noninteractive",
+        " netcfg/get_domain=vm<wait>",
+        " netcfg/get_hostname=vagrant<wait>",
+        " grub-installer/bootdev=/dev/sda<wait>",
+	" packer/partman={{user `partman_file`}}<wait>",
+        " packer/proxy={{user `preseed_proxy`}}<wait>",
+        " packer/ntp={{user `ntp_server`}}<wait>",
+        " noapic<wait>",
+	" preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/d-i/bionic/./preseed-desktop.cfg<wait>",
+        " DEBCONF_DEBUG=5<wait>",
+        " -- <wait>",
+        "<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "guest_os_type": "ubuntu-64",
+      "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+      "http_directory": "http",
+      "iso_checksum_type": "sha256",
+      "iso_checksum_url": "http://cdimage.ubuntu.com/releases/18.04/release/SHA256SUMS",
+      "iso_url": "http://cdimage.ubuntu.com/releases/18.04/release/ubuntu-18.04.3-server-amd64.iso",
+      "shutdown_command": "echo 'vagrant' | sudo -S shutdown -P now",
+      "ssh_password": "vagrant",
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "10000s",
+      "name": "virtualbox",
+      "vm_name": "packer-ubuntu-18.04-amd64",
+      "virtualbox_version_file": ".vbox_version",
+      "vboxmanage": [
+	    [ "modifyvm", "{{.Name}}", "--cableconnected1", "on"],
+	    [ "modifyvm", "{{.Name}}", "--cableconnected2", "on"],
+            [ "modifyvm", "{{.Name}}", "--memory", "1536" ],
+            [ "modifyvm", "{{.Name}}", "--cpus", "2" ],
+	    [ "modifyvm", "{{.Name}}", "--nic1", "nat" ]
+      ]
+    }
+  ],
+
+
+   "provisioners": [
+    {
+      "type": "shell",
+      "environment_vars": [
+         "http_proxy={{user `http_proxy`}}",
+         "https_proxy={{user `https_proxy`}}",
+         "ftp_proxy={{user `ftp_proxy`}}",
+         "no_proxy={{user `no_proxy`}}",
+         "soap_use_proxy={{user `soap_use_proxy`}}"
+      ],
+      "execute_command": "chmod +x {{.Path}}; echo vagrant| {{ .Vars }} sudo -E -S /bin/bash {{.Path}}",
+      "scripts": ["scripts/update.sh","scripts/sshd.sh","scripts/sudoers.sh","scripts/vagrant.sh"]
+    },
+    {
+      "type": "shell",
+      "environment_vars": [
+         "http_proxy={{user `http_proxy`}}",
+         "https_proxy={{user `https_proxy`}}",
+         "ftp_proxy={{user `ftp_proxy`}}",
+         "no_proxy={{user `no_proxy`}}",
+         "soap_use_proxy={{user `soap_use_proxy`}}"
+      ],
+      "execute_command": "chmod +x {{.Path}}; echo vagrant| {{ .Vars }} sudo -E -S /bin/bash {{.Path}}",
+      "scripts": ["scripts/virtualbox.sh"]
+    },
+    {
+      "type": "shell",
+      "environment_vars": [
+         "http_proxy={{user `http_proxy`}}",
+         "https_proxy={{user `https_proxy`}}",
+         "ftp_proxy={{user `ftp_proxy`}}",
+         "no_proxy={{user `no_proxy`}}",
+         "soap_use_proxy={{user `soap_use_proxy`}}"
+      ],
+      "execute_command": "chmod +x {{.Path}}; echo vagrant| {{ .Vars }} sudo -E -S /bin/bash {{.Path}}",
+      "scripts": ["scripts/cleanup.sh"]
+    }
+   ],
+
+    "post-processors": [{
+      "type": "vagrant",
+      "compression_level": "9",
+      "output": "ubuntu-18.04-{{user `partman_file`}}-{{.Provider}}-{{user `version`}}.box"
+    }]
+
+}

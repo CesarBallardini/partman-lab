@@ -1,0 +1,7 @@
+packer_cache/
+*.retry
+*.log
+*.box
+tmp/
+.vagrant/
+output-virtualbox/
