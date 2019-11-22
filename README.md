@@ -24,15 +24,20 @@ ls -1 http/d-i/bionic/partman/
 export PARTMAN_FILENAME=lvm_default
 
 
-export CHECKPOINT_DISABLE=1
 export BOX_VERSION=1.0.0
+BOX_FILENAME="ubuntu-18.04-${PARTMAN_FILENAME}-virtualbox-${BOX_VERSION}.box"
+
+export CHECKPOINT_DISABLE=1
 export PACKER_LOG_PATH="packer.log" && > ${PACKER_LOG_PATH}
+
+# construye box usando servidor de hora en internet:
 time packer build -var=headless=false  -var=version=${BOX_VERSION} ubuntu1804.json
 
-# Si se desea utilizar un servidor de hora local: (sino usa los disponibles en internet)
+# construye box usando servidor de hora de la red local:
 time packer build -var=headless=false  -var=version=${BOX_VERSION} -var=ntp_server=ntp1.mi.dominio.org ubuntu1804.json
 
-#time vagrant box add  --force --provider virtualbox cesarballardini/ubuntu1804 ubuntu-18.04*.box
+# Inserta el nombre del box en el Vagrantfile:
+sed -i -e "s@\(^[ ]*srv.vm.box_url = \)\(.*\)@\1\"${BOX_FILENAME}\"@" Vagrantfile
 
 time vagrant up
 # las pruebas que necesite realizar dentro de la VM:
@@ -44,6 +49,7 @@ vagrant destroy -f
 # elimino el box de mi cuenta:
 vagrant box list
 vagrant box remove --all --provider virtualbox cesarballardini/ubuntu1804
+rm -f ./${BOX_FILENAME}
 
 ```
 
