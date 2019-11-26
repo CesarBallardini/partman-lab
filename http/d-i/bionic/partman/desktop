@@ -1,0 +1,68 @@
+d-i partman-auto/disk string /dev/sda 
+d-i partman-auto/method string lvm 
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-lvm/confirm_nooverwrite boolean true
+d-i partman-lvm/confirm boolean true
+
+d-i partman-auto/expert_recipe string \
+      mydesktop:: \
+              512 512 512 ext2                                \
+                      $primary{ }                             \
+                      $bootable{ }                            \
+                      method{ format } format{ }              \
+                      use_filesystem{ } filesystem{ ext2 }    \
+                      label{ boot }                           \
+                      mountpoint{ /boot }                     \
+              . \
+              11000  1000   50000 ext4                        \
+                      $primary{ }                             \
+                      method{ lvm }                           \
+                      device{ /dev/sda2 }                     \
+                      vg_name{ dksvg }                        \
+              . \
+              1024 1000 8192 linux-swap                       \
+                      $lvmok{ } in_vg{ dskvg }                \
+                      lv_name{ swap }                         \
+                      method{ swap } format{ }                \
+              . \
+              5000 2000 10240 ext4                            \
+                      $lvmok{ } in_vg{ dskvg }                \
+                      lv_name{ root }                         \
+                      method{ format } format{ }              \
+                      use_filesystem{ } filesystem{ ext4 }    \
+                      label{ root }                           \
+                      mountpoint{ / }                         \
+              . \
+              5000 2000 10240 ext4                            \
+                      $lvmok{ } in_vg{ dskvg }                \
+                      lv_name{ altroot }                      \
+                      method{ format } format{ }              \
+                      use_filesystem{ } filesystem{ ext4 }    \
+                      label{ altroot }                        \
+                      mountpoint{ /altroot }                  \
+              . \
+              5000 2000 102400 ext4                           \
+                      $lvmok{ } in_vg{ dskvg }                \
+                      lv_name{ home }                         \
+                      method{ format } format{ }              \
+                      use_filesystem{ } filesystem{ ext4 }    \
+                      label{ home }                           \
+                      mountpoint{ /home }                     \
+              . \
+              10 10 8192 ext4                                 \
+                      $lvmok{ } in_vg{ dskvg }                \
+                      lv_name{ BORRAME }                      \
+                      method{ format } format{ }              \
+                      use_filesystem{ } filesystem{ ext4 }    \
+                      label{ BORRAME }                        \
+                      mountpoint{ /BORRAME }                  \
+              . \
+
+# ^^^ dejar renglon en blanco para conservar el continuador de linea \ en el ultimo punto de la receta partman
+
+# This makes partman automatically partition without confirmation, provided
+# that you told it what to do using one of the methods above.
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
